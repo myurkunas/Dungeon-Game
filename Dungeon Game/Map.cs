@@ -15,8 +15,9 @@ namespace Dungeon_Game
     {
         private int tileWidth, tileHeight, tileWidthCount, tileHeightCount;
         private ViewportAdapter viewportAdapter;
-        public Map(int tileWidth, int tileHeight, int tileWidthCount, int tileHeightCount)
+        public Map(ViewportAdapter viewportAdapter, int tileWidth, int tileHeight, int tileWidthCount, int tileHeightCount)
         {
+            this.viewportAdapter = viewportAdapter;
             this.tileWidth = tileWidth;
             this.tileHeight = tileHeight;
             this.tileWidthCount = tileWidthCount;
