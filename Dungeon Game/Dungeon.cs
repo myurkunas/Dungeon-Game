@@ -16,6 +16,9 @@ namespace Dungeon_Game
         SpriteFont gameFont;
         Vector2 targetPos = new Vector2(300, 300);
         const int targetRadius = 45;
+        MouseState mState;
+        bool mReleased = true;
+        int score = 0;
         Random rand = new Random();
 
         public Dungeon()
@@ -45,6 +48,26 @@ namespace Dungeon_Game
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            // If LMB is pressed, add 1 to the score. Set mouse released to false
+            mState = Mouse.GetState();
+            if (mState.LeftButton == ButtonState.Pressed && mReleased == true)
+            {
+                float mouseTargetDistance = Vector2.Distance(targetPos, mState.Position.ToVector2());
+                if(mouseTargetDistance < targetRadius)
+                {
+                    score++;
+
+                    targetPos.X = rand.Next(_graphics.PreferredBackBufferWidth - targetRadius * 2);
+                    targetPos.Y = rand.Next(_graphics.PreferredBackBufferHeight - targetRadius * 2);
+
+                }
+                mReleased = false;
+            }
+
+            // If LMB is released, set mouse released to true. This functionality prevents incrementing counter by holding LMB.
+            if (mState.LeftButton == ButtonState.Released)
+                mReleased = true;
+
             base.Update(gameTime);
         }
 
@@ -57,12 +80,12 @@ namespace Dungeon_Game
             //GraphicsDevice.Viewport.Bounds scales the background image to fit the window.
             _spriteBatch.Draw(background, GraphicsDevice.Viewport.Bounds, Color.White);
 
-            _spriteBatch.Draw(target, targetPos, Color.White);
+            _spriteBatch.Draw(target, new Vector2(targetPos.X - targetRadius, targetPos.Y - targetRadius), Color.White);
 
-            _spriteBatch.DrawString(gameFont, "test", new Vector2(100, 100), Color.White);
+            _spriteBatch.DrawString(gameFont, score.ToString(), new Vector2(100, 100), Color.White);
 
-            _spriteBatch.Draw(crosshair, new Vector2(Mouse.GetState().X - crosshair.Width / 2,
-                Mouse.GetState().Y - crosshair.Height / 2), Color.White);
+            _spriteBatch.Draw(crosshair, new Vector2(mState.X - crosshair.Width / 2,
+                mState.Y - crosshair.Height / 2), Color.White);
 
             _spriteBatch.End();
             base.Draw(gameTime);
